@@ -30,7 +30,7 @@ Table of contents. Every content page lives in `raw/pages/`. This file is naviga
 <!-- durable choices, lessons learned, principles -->
 
 ## Projects (Active)
-<!-- one page per active project — add as needed -->
+- [[culver-city-surgical-dashboard]] — ASC billing SPA: 308 nodes, DocuPipe intake, Stedi EDI, Supabase persistence, CF Pages deploy
 
 ## Aerospace
 <!-- pages about projects, concepts, references — add as needed -->
@@ -40,4 +40,4 @@ Table of contents. Every content page lives in `raw/pages/`. This file is naviga
 
 ---
 *Maintained automatically. Do not add content here — content lives in raw/pages/.*
-*Last updated: 2026-06-08*
+*Last updated: 2026-06-25*
