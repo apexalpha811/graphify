@@ -1,7 +1,7 @@
 # Culver City Surgical Dashboard (DocuPipe)
 
-Source: `raw/GRAPH_REPORT_culver-city-surgical-2026-06-25.md`
-Last graphify run: 2026-06-25 | 308 nodes · 789 edges · 16 communities
+Source: `raw/GRAPH_REPORT_culver-city-surgical-2026-06-26.md`
+Last graphify run: 2026-06-26 | 399 nodes · 861 edges · 30 communities
 
 ## What This Project Is
 
@@ -20,22 +20,22 @@ Local dev uses `server.js` (Node.js) which mirrors the CF Pages function logic i
 - `commitPreviewToDashboard()` — 13 edges
 - `callJson()` — 12 edges
 
-## Community Map
+## Community Map (30 communities)
 
 | Community | Nodes | Role |
 |-----------|-------|------|
-| DocuPipe Frontend Pipeline | 65 | lib/docupipe.js + lib/data/appeals.js — all frontend intake logic |
-| Cloudflare Pages Functions API | 61 | functions/[[path]].js — production API handler |
-| Dev Server Core | 25 | server.js config, file system, mock data |
-| Architecture Concepts | 24 | Conceptual nodes: Supabase schema, DocuPipe API, CF Pages host |
-| Dev Server Dashboard & Module API | 24 | Dashboard record + DocuPipe module CRUD in server.js |
-| Dev Server DocuPipe Client | 22 | DocuPipe HTTP client proxy in server.js |
-| CF Pages Preview Builders | 20 | buildClaimPreview, buildEligibilityPreview, etc. in functions |
-| Dev Server Preview Builders | 20 | Same builders mirrored in server.js |
-| Domain Concepts & CPT Codes | 18 | CPT_DB, CARC/RARC, Stedi EDI targets, mock/live mode pattern |
-| Package Configuration | 14 | package.json / Wrangler scripts |
+| Dev Server API | 91 | server.js — full local API mirror |
+| Cloudflare Pages API | 81 | functions/[[path]].js — production handler |
+| DocuPipe & Lib Layer | 65 | lib/docupipe.js, lib/data — frontend intake logic |
+| EDI Transaction Types | 34 | 837P/I, 270/271, 835, DEMO mode concepts |
+| API & Integration Lessons | 24 | tasks/lessons.md — integration gotchas |
+| Claim Lifecycle Concepts | 18 | Appeal flow, CARC/RARC, Stedi targets, mock/live |
+| Infrastructure & Persistence | 15 | CF Pages, Supabase, DocuPipe API, Stedi host |
+| Package Config | 14 | package.json / Wrangler scripts |
+| Endpoint Audit Trail | 6 | Stedi endpoint completeness rules |
+| Location & NPI Module | 4 | NPI proxy, global click handler fix, location CRUD |
 
-Key observation: CF Pages Functions (community 1) and Dev Server (communities 2/4/5) are near-mirror images — same functions duplicated across both runtimes.
+Key observation: CF Pages Functions and Dev Server are near-mirror communities (81 vs 91 nodes) — same functions duplicated across both runtimes.
 
 ## Key Architectural Patterns
 
@@ -47,11 +47,14 @@ Key observation: CF Pages Functions (community 1) and Dev Server (communities 2/
 
 **ERA-to-appeal flow:** Stedi 835 → CARC/RARC extraction → `generateAppealLetter.js` → appeal record — documented as planned agentic flow (Claude API + Stedi MCP).
 
+**All selects default blank:** As of 2026-06-26, the select renderer in both create and edit modals prepends a blank option to every dropdown field — operators must make an explicit choice.
+
 ## Surprising Connections
 
 - `.firecrawl/dashboard.md` (scraped UI snapshot) inferred to reference DocuPipe module schema — the UI nav reflects module config
 - `functions/[[path]].js` inferred to reference the Supabase eligibility migration — CF functions are the runtime that exercises those tables
 - `launch.json` explicitly references `server.js` — the debug config is wired to the dev server
+- Playwright UI snapshots link back to `index.html` — the snapshot files capture actual UI state during dev sessions
 
 ## Hyperedges (Group Relationships)
 
@@ -60,13 +63,14 @@ Key observation: CF Pages Functions (community 1) and Dev Server (communities 2/
 3. **Supabase persistence** — eligibility migration SQL, functions handler, server.js, supabase_fallback concept
 4. **DocuPipe → Stedi claim submission** — docupipe_api, docupipe_modules, index_html_dashboard_spa, stedi_837p, stedi_837i, dashboard_records_table
 5. **CF Pages production stack** — cloudflare_pages, functions_path_js, supabase_persistence, stedi_api, docupipe_api
-6. **Critical API bug patterns** — payer_api_response_structure, supabase_auth_pattern, docupipe_upload_payload, tasks/lessons.md
+6. **DocuPipe 404 retry pattern** — standardization_404_retry, job_poll_404_retry, retry_branch_hygiene
+7. **Stedi endpoint completeness** — endpoint_label_outcomes, stedi_lifecycle_artifacts, cross_module_endpoint
 
 ## Known Issues / Knowledge Gaps
 
-- 46 isolated nodes (config fragments, settings stubs) — low connectivity, not architectural
-- DocuPipe Frontend Pipeline (community 0) cohesion score 0.08 — very large community, candidate for splitting if refactoring
-- CF Functions and Dev Server communities are near-duplicate — suggests code could be unified into a shared module
+- 12 thin communities (singleton/pair nodes) — isolated config fragments
+- Dev Server and CF Pages communities are near-duplicate — candidate for shared module extraction
+- DocuPipe & Lib Layer cohesion 0.08 — large community, could split if lib/ grows further
 
 ## Tech Stack
 
